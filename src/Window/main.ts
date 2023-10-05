@@ -12,6 +12,7 @@ export default class Window {
 
     constructor() {
         this.html = document.createElement('div');
+        this.html.classList.add('window');
     }
 
     updateMatrix(matrix: MatrixData) {

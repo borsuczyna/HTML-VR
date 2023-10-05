@@ -60,4 +60,3 @@ let window = new Window()
     `)
     .setPosition(0, 1000, 0)
     .setRotation(0, 0, 0);
-engine.addWindow(window);
