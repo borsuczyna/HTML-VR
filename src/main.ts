@@ -41,11 +41,11 @@ class Engine {
         cry -= -angleDifference(0, degToRad(roll))/2;
         crz -= -angleDifference(0, degToRad(yaw))/2;
 
-        // document.getElementById('debug').innerText = `
-        //     yaw: ${yaw.toFixed(2)}
-        //     pitch: ${pitch.toFixed(2)}
-        //     roll: ${roll.toFixed(2)}
-        // `
+        document.getElementById('debug')!.innerText = `
+            yaw: ${yaw.toFixed(2)}
+            pitch: ${pitch.toFixed(2)}
+            roll: ${roll.toFixed(2)}
+        `
 
         // z is up vector, y is forward vector
         let dist1 = distance2D(this.camera.x, this.camera.y, x, y);

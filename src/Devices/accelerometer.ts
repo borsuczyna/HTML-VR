@@ -1,3 +1,5 @@
+import { Device, DeviceManager } from "./deviceManager";
+
 export default class Accelerometer {
     public available: boolean = false;
 
@@ -5,11 +7,17 @@ export default class Accelerometer {
     private pitch: number = 0;
     private roll: number = 0;
 
-    constructor() {
-        this.available = window.DeviceMotionEvent !== undefined;
+    private deviceManager: DeviceManager = new DeviceManager();
 
-        if (this.available) {
-            window.addEventListener("deviceorientation", (event) => this.updateOrientation(event));
+    constructor() {
+        this.available = window.DeviceOrientationEvent !== undefined;
+
+        window.addEventListener("deviceorientation", (event) => this.updateOrientation(event));
+        
+        if(this.deviceManager.device == Device.Desktop) {
+            document.addEventListener('mousedown', (e) => this.manualControl(e, 'click'));
+            document.addEventListener('mouseup', (e) => this.manualControl(e, 'release'));
+            document.addEventListener('mousemove', (e) => this.manualControl(e, 'move'));
         }
     }
 
@@ -34,9 +42,26 @@ export default class Accelerometer {
     }
 
     get orientation(): [number, number, number] {
-        return [this.yaw, this.pitch, this.roll];
+        if(this.deviceManager.device == Device.Desktop) {
+            return [this.yaw, this.pitch - 90, this.roll];
+        } else {
+            return [this.yaw, this.pitch, this.roll];
+        }
+    }
+
+    // manual control for desktop
+    private isMouseDown: boolean = false;
+
+    private manualControl(e: MouseEvent, type: 'click' | 'release' | 'move') {
+        if(type == 'click') {
+            this.isMouseDown = true;
+        } else if(type == 'release') {
+            this.isMouseDown = false;
+        }
+
+        if(this.isMouseDown) {
+            this.yaw += e.movementX/10;
+            this.pitch -= e.movementY/10;
+        }
     }
 }
-
-// -160 > -20
-// -(-160 + 180) = -20
