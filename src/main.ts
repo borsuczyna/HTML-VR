@@ -8,13 +8,11 @@ import './style.css';
 class Engine {
     app: HTMLElement;
     camera: Camera = new Camera();
-    accelerometer: Accelerometer = new Accelerometer();
     
     windows: Window[] = [];
 
     constructor() {
         this.app = document.getElementById('app')!;
-        // on click request fullscreen
         document.addEventListener('click', () => {
             this.app.requestFullscreen();
         });
@@ -31,7 +29,7 @@ class Engine {
         let [x, y, z] = [window.x, window.y, window.z];
         let [rx, ry, rz] = [window.rx, window.ry, window.rz];
         let [crx, cry, crz] = [this.camera.rx, this.camera.ry, this.camera.rz];
-        let [yaw, pitch, roll] = this.accelerometer.orientation;
+        let [yaw, pitch, roll] = Accelerometer.orientation;
         
         rx -= pitch;
         ry -= roll;

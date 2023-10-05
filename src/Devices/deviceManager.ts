@@ -14,15 +14,7 @@ export enum Device {
 }
 
 export class DeviceManager {
-    OS: OS = OS.Unknown;
-    device: Device = Device.Unknown;
-
-    constructor() {
-        this.OS = this.getOS();
-        this.device = this.getDevice();
-    }
-
-    private getOS(): OS {
+    static getOS(): OS {
         if (navigator.userAgent.indexOf("Win") != -1) {
             return OS.Windows;
         } else if (navigator.userAgent.indexOf("Mac") != -1) {
@@ -38,7 +30,7 @@ export class DeviceManager {
         }
     }
 
-    private getDevice(): Device {
+    static getDevice(): Device {
         if (navigator.userAgent.indexOf("Mobile") != -1 || navigator.userAgent.indexOf("Tablet") != -1) {
             return Device.Mobile;
         } else {
