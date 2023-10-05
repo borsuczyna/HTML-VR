@@ -64,4 +64,4 @@ export default class Accelerometer {
     }
 }
 
-let accelerometer = new Accelerometer();
+new Accelerometer();

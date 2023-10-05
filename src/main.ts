@@ -1,4 +1,5 @@
 import Accelerometer from './Devices/accelerometer';
+import { Device, DeviceManager } from './Devices/deviceManager';
 import Camera from './Rendering/camera';
 import { angleDifference, degToRad, distance2D, distance3D, radToDeg } from './Rendering/math';
 import Matrix from './Rendering/matrix';
@@ -7,15 +8,17 @@ import './style.css';
 
 class Engine {
     app: HTMLElement;
-    camera: Camera = new Camera();
     
     windows: Window[] = [];
 
     constructor() {
         this.app = document.getElementById('app')!;
-        document.addEventListener('click', () => {
-            this.app.requestFullscreen();
-        });
+        
+        if(DeviceManager.getDevice() != Device.Desktop) {
+            document.addEventListener('click', () => {
+                this.app.requestFullscreen();
+            });
+        }
 
         requestAnimationFrame(this.update.bind(this));
     }
@@ -28,7 +31,7 @@ class Engine {
     getWindowMatrix(window: Window) {
         let [x, y, z] = [window.x, window.y, window.z];
         let [rx, ry, rz] = [window.rx, window.ry, window.rz];
-        let [crx, cry, crz] = [this.camera.rx, this.camera.ry, this.camera.rz];
+        let [crx, cry, crz] = [Camera.rx, Camera.ry, Camera.rz];
         let [yaw, pitch, roll] = Accelerometer.orientation;
         
         rx -= pitch;
@@ -46,10 +49,10 @@ class Engine {
         `
 
         // z is up vector, y is forward vector
-        let dist1 = distance2D(this.camera.x, this.camera.y, x, y);
-        let dist2 = distance3D(this.camera.x, this.camera.y, this.camera.z, x, y, z);
-        let angle1 = Math.atan2(this.camera.y - y, this.camera.x - x) + Math.PI + crz;
-        let angle2 = Math.atan2(this.camera.z - z, dist1) + crx;
+        let dist1 = distance2D(Camera.x, Camera.y, x, y);
+        let dist2 = distance3D(Camera.x, Camera.y, Camera.z, x, y, z);
+        let angle1 = Math.atan2(Camera.y - y, Camera.x - x) + Math.PI + crz;
+        let angle2 = Math.atan2(Camera.z - z, dist1) + crx;
 
         x = Math.cos(angle1) * dist2;
         y = Math.sin(angle1) * dist2;
