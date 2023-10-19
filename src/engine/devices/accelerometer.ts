@@ -1,22 +1,24 @@
 import { Device, DeviceManager } from "./deviceManager";
 
 export default class Accelerometer {
-    public available: boolean = false;
+    private static initialized: boolean = false;
 
     private static yaw: number = 0;
     private static pitch: number = 0;
     private static roll: number = 0;
 
     constructor() {
-        this.available = window.DeviceOrientationEvent !== undefined;
+        if(Accelerometer.initialized) return;
 
         window.addEventListener("deviceorientation", (event) => this.updateOrientation(event));
         
-        if(DeviceManager.getDevice() == Device.Desktop) {
+        if(DeviceManager.device == Device.Desktop) {
             document.addEventListener('mousedown', (e) => this.manualControl(e, 'click'));
             document.addEventListener('mouseup', (e) => this.manualControl(e, 'release'));
             document.addEventListener('mousemove', (e) => this.manualControl(e, 'move'));
         }
+
+        Accelerometer.initialized = true;
     }
 
     private updateOrientation(event: DeviceOrientationEvent) {
@@ -40,7 +42,7 @@ export default class Accelerometer {
     }
 
     static get orientation(): [number, number, number] {
-        if(DeviceManager.getDevice() == Device.Desktop) {
+        if(DeviceManager.device == Device.Desktop) {
             return [Accelerometer.yaw, Accelerometer.pitch - 90, Accelerometer.roll];
         } else {
             return [Accelerometer.yaw, Accelerometer.pitch, Accelerometer.roll];

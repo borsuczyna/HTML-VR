@@ -1,46 +1,57 @@
-export type MatrixData = [
-    number, number, number, number,
-    number, number, number, number,
-    number, number, number, number,
-    number, number, number, number
-];
+import { mat4, quat, vec3 } from 'gl-matrix';
 
-export default class Matrix {
-    static create(
-        x: number = 0,
-        y: number = 0,
-        z: number = 0,
-        rx: number = 0,
-        ry: number = 0,
-        rz: number = 0
-    ): MatrixData {
-        rx = rx * Math.PI / 180;
-        ry = ry * Math.PI / 180;
-        rz = rz * Math.PI / 180;
-
-        [rx, ry, rz] = [rx, rz, ry];
-
-        return [
-            Math.cos(rz) * Math.cos(ry) - Math.sin(rz) * Math.sin(rx) * Math.sin(ry), Math.cos(ry) * Math.sin(rz) + Math.cos(rz) * Math.sin(rx) * Math.sin(ry), -Math.cos(rx) * Math.sin(ry), 0,
-            -Math.cos(rx) * Math.sin(rz), Math.cos(rz) * Math.cos(rx), Math.sin(rx), 0,
-            Math.cos(rz) * Math.sin(ry) + Math.cos(ry) * Math.sin(rz) * Math.sin(rx), Math.sin(rz) * Math.sin(ry) - Math.cos(rz) * Math.cos(ry) * Math.sin(rx), Math.cos(rx) * Math.cos(ry), 0,
-            x, z, 999 - y, 1
-        ]
+export function generate(position: vec3, rotation: vec3): mat4 {
+    if (
+        position.length !== 3 ||
+        rotation.length !== 3 ||
+        isNaN(rotation[0]) ||
+        isNaN(rotation[1]) ||
+        isNaN(rotation[2])
+    ) {
+        return mat4.create();
     }
 
-    static multiplyMatrix(matrixA: MatrixData, matrixB: MatrixData): MatrixData {
-        const result: MatrixData = [] as any as MatrixData;
-    
-        for (let i = 0; i < 4; i++) {
-            for (let j = 0; j < 4; j++) {
-                let sum = 0;
-                for (let k = 0; k < 4; k++) {
-                    sum += matrixA[i * 4 + k] * matrixB[k * 4 + j];
-                }
-                result.push(sum);
-            }
-        }
-    
-        return result;
-    }
+    const [x, y, z] = position;
+    const [rX, rY, rZ] = rotation;
+
+    const toRadians = (degrees: number) => (Math.PI * degrees) / 180;
+
+    const radRX = toRadians(rX);
+    const radRY = toRadians(rY);
+    const radRZ = toRadians(rZ);
+
+    return [
+        Math.cos(radRZ) * Math.cos(radRY) - Math.sin(radRZ) * Math.sin(radRX) * Math.sin(radRY),
+        Math.cos(radRY) * Math.sin(radRZ) + Math.cos(radRZ) * Math.sin(radRX) * Math.sin(radRY),
+        -Math.cos(radRX) * Math.sin(radRY),
+        0,
+        
+        -Math.cos(radRX) * Math.sin(radRZ),
+        Math.cos(radRZ) * Math.cos(radRX),
+        Math.sin(radRX),
+        0,
+
+        Math.cos(radRZ) * Math.sin(radRY) + Math.cos(radRY) * Math.sin(radRZ) * Math.sin(radRX),
+        Math.sin(radRZ) * Math.sin(radRY) - Math.cos(radRZ) * Math.cos(radRY) * Math.sin(radRX),
+        Math.cos(radRX) * Math.cos(radRY),
+        0,
+
+        x, y, z, 1,
+    ];
+}
+
+export function getOffset(position: vec3, rotation: vec3, offset: vec3): vec3 {
+    const mat = generate(position, rotation);
+
+    const vec = vec3.create();
+    vec3.transformMat4(vec, offset, mat);
+
+    return vec;
+}
+
+export function getOffsetFromMatrix(matrix: mat4, offset: vec3): vec3 {
+    const vec = vec3.create();
+    vec3.transformMat4(vec, offset, matrix);
+
+    return vec;
 }

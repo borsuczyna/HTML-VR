@@ -1,48 +1,18 @@
 body {
-    font-family: Inter, sans-serif;
-    background-color: black;
-    color: white;
-
-    padding: 0;
-    margin: 0;
-
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
+   margin: 0;
+   padding: 0;
 }
 
 #app {
-    width: 100vw;
-    height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    perspective: 300px;
-    overflow: hidden;
-}
-
-.element {
-    background-color: red;
-    padding: 5rem;
-    display: inline-block;
-
-    transform: matrix3d(
-        1, 0, 0, 0,
-        0, 1, 0, 0,
-        0, 0, 1, 0,
-        0, 0, 999, 1
-    );
-}
-
-#debug {
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: 9999;
+   position: relative;
+   width: 100dvw;
+   height: 100dvh;
+   overflow: hidden;
+   background: #000;
 }
 
 .window {
-    position: absolute;
+   position: absolute;
+   left: 0;
+   top: 0;
 }
