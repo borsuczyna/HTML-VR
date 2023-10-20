@@ -6,16 +6,16 @@ export default class CameraDesktopController {
     private static cursorDown: boolean = false;
 
     constructor() {
-        document.addEventListener('mousedown', (e) => CameraDesktopController.onMouseDown(e));
-        document.addEventListener('mouseup', (e) => CameraDesktopController.onMouseUp(e));
+        document.addEventListener('mousedown', () => CameraDesktopController.onMouseDown());
+        document.addEventListener('mouseup', () => CameraDesktopController.onMouseUp());
         document.addEventListener('mousemove', (e) => CameraDesktopController.onMouseMove(e));
     }
 
-    private static onMouseDown(e: MouseEvent) {
+    private static onMouseDown() {
         CameraDesktopController.cursorDown = true;
     }
 
-    private static onMouseUp(e: MouseEvent) {
+    private static onMouseUp() {
         CameraDesktopController.cursorDown = false;
     }
 

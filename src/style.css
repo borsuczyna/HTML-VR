@@ -16,3 +16,15 @@ body {
    left: 0;
    top: 0;
 }
+
+#debug {
+   position: absolute;
+   left: 0;
+   top: 0;
+   color: #fff;
+   font-size: 12px;
+   font-family: monospace;
+   padding: 10px;
+   background: rgba(0, 0, 0, 0.5);
+   z-index: 100;
+}

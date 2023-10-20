@@ -2,11 +2,10 @@ import Window from "./window/window";
 import { Device, DeviceManager } from "./devices/deviceManager";
 import { Transform } from "../rendering/transform";
 import Camera from "../camera/camera";
-import { vec3 } from "gl-matrix";
+import { vec2 } from "gl-matrix";
 import CameraDesktopController from "../camera/desktopController";
-
-// Usage example:
-const pointPosition: [number, number, number] = [0, 3, 100];
+import CameraMobileController from "../camera/mobileController";
+import EventManager from "../event/main";
 
 export default class Engine {
     private app: HTMLElement = document.getElementById('app')!;
@@ -17,6 +16,8 @@ export default class Engine {
             document.addEventListener('click', () => {
                 this.app.requestFullscreen();
             });
+
+            new CameraMobileController();
         } else {
             new CameraDesktopController();
         }
@@ -32,16 +33,25 @@ export default class Engine {
     update() {
         requestAnimationFrame(this.update.bind(this));
 
+        EventManager.triggerEvent('onClientPreRender', Engine);
+        
         this.windows.forEach(window => {
-            const [x, y] = Camera.worldToScreen(pointPosition);
             const borders = window.bordersPositions;
             const screenPoints = borders.map(border => Camera.worldToScreen(border));
+            
+            // if any screenPoints[2] < 0, then the window is behind the camera
+            if(screenPoints[2][2] < 0) {
+                window.html.style.display = 'none';
+                return;
+            } else {
+                window.html.style.display = 'block';
+            }
 
             let transform = Transform.getElementTransform(window.html, [
-                screenPoints[1],
-                screenPoints[3],
-                screenPoints[2],
-                screenPoints[0]
+                screenPoints[1] as unknown as vec2,
+                screenPoints[3] as unknown as vec2,
+                screenPoints[2] as unknown as vec2,
+                screenPoints[0] as unknown as vec2
             ], [window.width, window.height]);
 
             let depth = window.depth;

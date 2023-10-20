@@ -1,4 +1,4 @@
-import { mat4, quat, vec3 } from 'gl-matrix';
+import { mat4, vec3 } from 'gl-matrix';
 
 export function generate(position: vec3, rotation: vec3): mat4 {
     if (
